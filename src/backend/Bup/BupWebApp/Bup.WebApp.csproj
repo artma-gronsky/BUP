@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <UserSecretsId>aspnet-BupWebApp-F514D04B-53F1-4A54-97F7-77F41ECDC376</UserSecretsId>
+        <WebProject_DirectoryAccessLevelKey>0</WebProject_DirectoryAccessLevelKey>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="3.1.14" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Bup.Infrastructure\Bup.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>

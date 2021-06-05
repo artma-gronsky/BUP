@@ -31,10 +31,10 @@ return;
         x: x,
         y: y,
         origin: { x: "center", y: "center" },
-        width: 10,
-        height: 10,
+        width: 17,
+        height: 17,
        // fill: "#009933",
-        stroke: "5px #009933",
+        stroke: "3px #009933",
         join: "round"
     });
 
