@@ -1,3 +1,4 @@
+using Bup.Common;
 using Bup.Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -14,7 +15,11 @@ namespace Bup.Infrastructure.EntityConfiguration
             
             builder.Property(o => o.Username).IsRequired().HasMaxLength(50);
             
-            builder.Property(o => o.Password).IsRequired().HasMaxLength(50);
+            builder.Property(o => o.Password)
+                .HasConversion(o =>  StringCipher.Encrypt(o, typeof(User).ToString()),
+                    o => StringCipher.Decrypt(o,typeof(User).ToString()))
+                .IsRequired()
+                .HasMaxLength(50);
 
             builder.Property(o => o.FirstName);
 

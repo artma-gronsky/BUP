@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Bup.Infrastructure.Entities;
 using Bup.WebApp.Models;
@@ -10,6 +11,6 @@ namespace Bup.WebApp.Services
         
         List<User> GetAll();
         
-        User GetById(int id);
+        User GetById(Guid id);
     }
 }

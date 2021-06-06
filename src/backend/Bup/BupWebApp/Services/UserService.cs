@@ -17,7 +17,7 @@ namespace Bup.WebApp.Services
         // users hardcoded for simplicity, store in a db with hashed passwords in production applications
         private List<User> _users = new List<User>
         {
-            new User { Id = 1, FirstName = "Test", LastName = "User", Username = "test", Password = "test" }
+            new User { Id = new Guid(), FirstName = "Test", LastName = "User", Username = "test", Password = "test" }
         };
 
         private readonly AuthSettings _authSettings;
@@ -45,7 +45,7 @@ namespace Bup.WebApp.Services
             return _users;
         }
 
-        public User GetById(int id)
+        public User GetById(Guid id)
         {
             return _users.FirstOrDefault(x => x.Id == id);
         }

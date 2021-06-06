@@ -1,10 +1,12 @@
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 
 namespace Bup.Infrastructure.Entities
 {
-    public class User
+    public class User: IEntity
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         
         public string FirstName { get; set; }
         
