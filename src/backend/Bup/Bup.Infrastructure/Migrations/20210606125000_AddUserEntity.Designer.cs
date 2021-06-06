@@ -10,7 +10,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Bup.Infrastructure.Migrations
 {
     [DbContext(typeof(BupDbContext))]
-    [Migration("20210606120909_AddUserEntity")]
+    [Migration("20210606125000_AddUserEntity")]
     partial class AddUserEntity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -35,8 +35,7 @@ namespace Bup.Infrastructure.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Username")
                         .IsRequired()

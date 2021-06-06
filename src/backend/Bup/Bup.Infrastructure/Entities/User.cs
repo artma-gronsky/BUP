@@ -13,8 +13,7 @@ namespace Bup.Infrastructure.Entities
         public string LastName { get; set; }
         
         public string Username { get; set; }
-
-        [JsonIgnore]
+        
         public string Password { get; set; }
     }
 }

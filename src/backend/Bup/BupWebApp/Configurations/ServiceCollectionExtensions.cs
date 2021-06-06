@@ -1,4 +1,6 @@
 using Bup.Infrastructure.DbContext;
+using Bup.Infrastructure.Entities;
+using Bup.Infrastructure.Repositories;
 using Bup.WebApp.Configurations.Models;
 using Bup.WebApp.Services;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +27,9 @@ namespace Bup.WebApp.Configurations
             {
                 options.UseNpgsql(configuration.GetConnectionString("BupDb"));
             }, ServiceLifetime.Scoped, ServiceLifetime.Singleton);
-            
+
+            services.AddScoped<IBaseGenericRepository<User>, BaseGenericRepository<User>>();
+
         }
 
     }

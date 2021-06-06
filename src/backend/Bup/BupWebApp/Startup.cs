@@ -4,6 +4,7 @@ using Bup.WebApp.Configurations;
 using Bup.WebApp.Core.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,6 +28,13 @@ namespace Bup.WebApp
             services.RegisterConfigurations(Configuration);
             services.ConfigureDatabase(Configuration);
             services.RegisterServices();
+            
+            services.AddApiVersioning(v =>
+            {
+                v.ReportApiVersions = true;
+                v.AssumeDefaultVersionWhenUnspecified = true;
+                v.DefaultApiVersion = new ApiVersion(1, 0);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

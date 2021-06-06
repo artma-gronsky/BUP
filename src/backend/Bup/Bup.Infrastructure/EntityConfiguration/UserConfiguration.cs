@@ -14,12 +14,11 @@ namespace Bup.Infrastructure.EntityConfiguration
             builder.HasKey(o => o.Id);
             
             builder.Property(o => o.Username).IsRequired().HasMaxLength(50);
-            
+
             builder.Property(o => o.Password)
-                .HasConversion(o =>  StringCipher.Encrypt(o, typeof(User).ToString()),
-                    o => StringCipher.Decrypt(o,typeof(User).ToString()))
-                .IsRequired()
-                .HasMaxLength(50);
+                .HasConversion(o => StringCipher.Encrypt(o, "user"),
+                    o => StringCipher.Decrypt(o, "user"))
+                .IsRequired();
 
             builder.Property(o => o.FirstName);
 

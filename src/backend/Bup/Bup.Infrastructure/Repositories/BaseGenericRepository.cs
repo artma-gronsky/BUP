@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Bup.Infrastructure.DbContext;
 using Bup.Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,9 +10,9 @@ namespace Bup.Infrastructure.Repositories
 {
     public class BaseGenericRepository<T>: IBaseGenericRepository<T> where T: class, IEntity
     {
-        private readonly Microsoft.EntityFrameworkCore.DbContext  _context;
+        private readonly BupDbContext _context;
 
-        public BaseGenericRepository(Microsoft.EntityFrameworkCore.DbContext context)
+        public BaseGenericRepository(BupDbContext context)
         {
             _context = context;
         }
@@ -28,9 +29,9 @@ namespace Bup.Infrastructure.Repositories
 
         public async Task<T> Insert(T entity)
         {
-            var createdOperation = await _context.Set<T>().AddAsync(entity);
+            var result = await _context.Set<T>().AddAsync(entity);
             await _context.SaveChangesAsync();
-            return createdOperation.Entity;
+            return result.Entity;
         }
 
         public async Task<T> Update(T entity)
