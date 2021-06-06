@@ -1,5 +1,7 @@
+using Bup.Infrastructure.DbContext;
 using Bup.WebApp.Configurations.Models;
 using Bup.WebApp.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,5 +18,15 @@ namespace Bup.WebApp.Configurations
         {
             services.AddScoped<IUserService, UserService>();
         }
+        
+        public static void ConfigureDatabase(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<BupDbContext>((provider, options) =>
+            {
+                options.UseNpgsql(configuration.GetConnectionString("BupDb"));
+            }, ServiceLifetime.Scoped, ServiceLifetime.Singleton);
+            
+        }
+
     }
 }

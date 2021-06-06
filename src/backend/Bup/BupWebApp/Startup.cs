@@ -1,3 +1,5 @@
+using System;
+using Bup.Infrastructure.DbContext;
 using Bup.WebApp.Configurations;
 using Bup.WebApp.Core.Middlewares;
 using Microsoft.AspNetCore.Builder;
@@ -5,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Polly;
 
 namespace Bup.WebApp
 {
@@ -22,6 +25,7 @@ namespace Bup.WebApp
         {
             services.AddControllers();
             services.RegisterConfigurations(Configuration);
+            services.ConfigureDatabase(Configuration);
             services.RegisterServices();
         }
 
@@ -47,6 +51,15 @@ namespace Bup.WebApp
             app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            
+            InitializeDatabase(app);
+        }
+        
+        protected virtual void InitializeDatabase(IApplicationBuilder app)
+        {
+            var retryOnFailPolicy = Policy.Handle<Exception>().WaitAndRetry(3, _ => TimeSpan.FromSeconds(10));
+
+            retryOnFailPolicy.Execute(app.MigrateDbContext<BupDbContext>);
         }
     }
 }
