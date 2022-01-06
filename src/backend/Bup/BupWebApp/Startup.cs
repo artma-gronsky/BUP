@@ -1,5 +1,5 @@
-using JavaScriptEngineSwitcher.ChakraCore;
 using System;
+using System.Text.Json.Serialization;
 using Bup.Infrastructure.DbContext;
 using Bup.WebApp.Configurations;
 using Bup.WebApp.Core.Middlewares;
@@ -10,9 +10,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Polly;
-using React.AspNet;
-using JavaScriptEngineSwitcher.Extensions.MsDependencyInjection;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 
 
 namespace Bup.WebApp
@@ -29,60 +28,57 @@ namespace Bup.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                // options.Filters.Add<ValidationModelAttribute>();
+                // options.Filters.Add(new ProducesResponseTypeAttribute(typeof(ServiceStatusCodeProblemDetails), StatusCodes.Status401Unauthorized));
+                // options.Filters.Add(new ProducesResponseTypeAttribute(typeof(ServiceStatusCodeProblemDetails), StatusCodes.Status422UnprocessableEntity));
+                // options.Filters.Add(new ProducesResponseTypeAttribute(typeof(ServiceStatusCodeProblemDetails), StatusCodes.Status424FailedDependency));
+                options.Filters.Add(new ProducesAttribute("application/json"));
+            }).AddJsonOptions(opts =>
+            {
+                opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            });;
+            
+            services.RegisterConfigurations(Configuration);
+            services.ConfigureDatabase(Configuration);
+            services.RegisterServices();
+            
+            services.AddAutoMapper(typeof(Startup));
+            
+            services.AddHttpContextAccessor();
+            
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo(){Title = "BUP API", Version = "v1"});
+            });
+            
+            
             services.AddApiVersioning(v =>
             {
                 v.ReportApiVersions = true;
                 v.AssumeDefaultVersionWhenUnspecified = true;
                 v.DefaultApiVersion = new ApiVersion(1, 0);
             });
-            
-            
-            services.AddHttpContextAccessor();
-            services.AddJsEngineSwitcher(options => options.DefaultEngineName = ChakraCoreJsEngine.EngineName)
-                .AddChakraCore();
-
-            services.AddReact();
-            services.AddMvc();
-            
-            
-            // Build the intermediate service provider then return it
-            services.BuildServiceProvider();
-            
-            services.RegisterConfigurations(Configuration);
-            services.ConfigureDatabase(Configuration);
-            services.RegisterServices();
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // Initialise ReactJS.NET. Must be before static files.
-            app.UseReact(config =>
+            // if (env.IsDevelopment())
+            // {
+            //     app.UseDeveloperExceptionPage();
+            // }
+
+            // swagger
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
             {
-                config
-                    .SetReuseJavaScriptEngines(true)
-                    .SetLoadBabel(false)
-                    .SetLoadReact(false)
-                    .SetReactAppBuildPath("~/dist");
+                c.SwaggerEndpoint("v1/swagger.json", "BUP API v1");
             });
-
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseStaticFiles();
 
             app.UseRouting();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllerRoute("default", "{path?}", new { controller = "Home", action = "Index" });
-                endpoints.MapControllerRoute("comments-root", "comments", new { controller = "Home", action = "Index" });
-                endpoints.MapControllerRoute("comments", "comments/page-{page}", new { controller = "Home", action = "Comments" });
-            });
-            
             // global cors policy
             app.UseCors(x => x
                 .AllowAnyOrigin()
@@ -91,6 +87,15 @@ namespace Bup.WebApp
 
             // custom jwt auth middleware
             app.UseMiddleware<JwtMiddleware>();
+
+            app.UseRouting();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+            
             InitializeDatabase(app);
         }
         
