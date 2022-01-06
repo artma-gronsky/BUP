@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using Bup.Infrastructure.DbContext;
 using Bup.WebApp.Configurations;
 using Bup.WebApp.Core.Middlewares;
+using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -40,6 +41,8 @@ namespace Bup.WebApp
                 opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });;
             
+            services.ConfigureProblemDetails();
+            
             services.RegisterConfigurations(Configuration);
             services.ConfigureDatabase(Configuration);
             services.RegisterServices();
@@ -65,11 +68,6 @@ namespace Bup.WebApp
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // if (env.IsDevelopment())
-            // {
-            //     app.UseDeveloperExceptionPage();
-            // }
-
             // swagger
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -77,20 +75,24 @@ namespace Bup.WebApp
                 c.SwaggerEndpoint("v1/swagger.json", "BUP API v1");
             });
 
-            app.UseRouting();
-
+            app.UseProblemDetails();
+            
             // global cors policy
             app.UseCors(x => x
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
-
+            
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            
+            app.UseRouting();
+            
             // custom jwt auth middleware
             app.UseMiddleware<JwtMiddleware>();
-
-            app.UseRouting();
-            app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
