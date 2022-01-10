@@ -6,7 +6,6 @@ using Bup.WebApp.Core.Middlewares;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,11 +29,7 @@ namespace Bup.WebApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers(options =>
-            {
-                // options.Filters.Add<ValidationModelAttribute>();
-                // options.Filters.Add(new ProducesResponseTypeAttribute(typeof(ServiceStatusCodeProblemDetails), StatusCodes.Status401Unauthorized));
-                // options.Filters.Add(new ProducesResponseTypeAttribute(typeof(ServiceStatusCodeProblemDetails), StatusCodes.Status422UnprocessableEntity));
-                // options.Filters.Add(new ProducesResponseTypeAttribute(typeof(ServiceStatusCodeProblemDetails), StatusCodes.Status424FailedDependency));
+            { 
                 options.Filters.Add(new ProducesAttribute("application/json"));
             }).AddJsonOptions(opts =>
             {
@@ -56,12 +51,17 @@ namespace Bup.WebApp
                 c.SwaggerDoc("v1", new OpenApiInfo(){Title = "BUP API", Version = "v1"});
             });
             
+            services.AddVersionedApiExplorer(o =>
+            {
+                o.GroupNameFormat = "'v'VVV";
+                o.SubstituteApiVersionInUrl = true;   // this is needed to work
+            });
             
             services.AddApiVersioning(v =>
             {
                 v.ReportApiVersions = true;
                 v.AssumeDefaultVersionWhenUnspecified = true;
-                v.DefaultApiVersion = new ApiVersion(1, 0);
+                v.DefaultApiVersion = new ApiVersion(2, 0);
             });
         }
         

@@ -1,15 +1,20 @@
 import {useFormik} from "formik";
-import React, {useState} from "react";
+import React, {useRef} from "react";
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
 import { classNames } from 'primereact/utils';
 import "./sign-in.styles.scss";
 import bgrImage from './../../assets/images/sign-in-background.jpg'
+import {authenticationService} from "../../services/authentication/authentication.service";
+import {useStateValue} from "../../contexts/state-context";
+import {setCurrentUser, setUserError} from "../../redux/user/user.action";
+import { Toast } from 'primereact/toast';
 
 export const SignInPage = () => {
-    const [showMessage, setShowMessage] = useState(false);
-    const [formData, setFormData] = useState({});
+    const [state, dispatch] = useStateValue();
+    const toast = useRef();
+    const passwordField = useRef();
 
     const formik = useFormik({
         initialValues: {
@@ -33,10 +38,23 @@ export const SignInPage = () => {
             return errors;
         },
         onSubmit: (data) => {
-            setFormData(data);
-            setShowMessage(true);
+            const {email, password} = data;
 
-            formik.resetForm();
+            authenticationService.login(email, password)
+                .then((user)=>{
+                    formik.resetForm();
+                    dispatch(setCurrentUser(user));
+                    console.log(authenticationService.currentUserValue);
+                }).catch(err => {
+
+                dispatch(setUserError(err))
+
+                toast.current.show({severity: 'info', summary: 'Авторизация', detail: 'Введен неверный логин или пароль', life: 3000});
+                formik.resetForm();
+                formik.setFieldValue("email", email);
+                console.log( passwordField.current);
+                passwordField.current.inputRef.current.focus();
+            });
         }
     });
 
@@ -46,7 +64,9 @@ export const SignInPage = () => {
     };
 
     return (
+
         <div className="sign-in-page" style={{backgroundImage: `url(${bgrImage})`}}>
+            <Toast ref={toast} />
             <h1 className="title">BUP</h1>
             <div className="sign-in-form">
                 <div className="p-d-flex p-jc-center">
@@ -62,7 +82,7 @@ export const SignInPage = () => {
                             </div>
                             <div className="p-field">
                             <span className="p-float-label">
-                                <Password id="password" name="password" value={formik.values.password} onChange={formik.handleChange}
+                                <Password id="password" name="password" ref={passwordField} value={formik.values.password} onChange={formik.handleChange}
                                           feedback={false}
 
                                           className={classNames({ 'p-invalid': isFormFieldValid('password') })} />
