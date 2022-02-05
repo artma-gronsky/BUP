@@ -8,7 +8,7 @@ namespace Bup.WebApp.Controllers
     
     [ApiController]
     [ApiVersion("1")]
-    [Route("v{version:apiVersion}/[controller]")]
+    [Route("/api/v{version:apiVersion}/[controller]")]
     public class UsersController:ControllerBase
     {
         private readonly IBaseGenericRepository<User> _users;

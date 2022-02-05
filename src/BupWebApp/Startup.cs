@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Text.Json.Serialization;
 using Bup.Infrastructure.DbContext;
 using Bup.WebApp.Configurations;
@@ -6,11 +7,13 @@ using Bup.WebApp.Core.Middlewares;
 using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Polly;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 
 
@@ -63,6 +66,8 @@ namespace Bup.WebApp
                 v.AssumeDefaultVersionWhenUnspecified = true;
                 v.DefaultApiVersion = new ApiVersion(2, 0);
             });
+            
+            services.AddMvc(options => options.EnableEndpointRouting = false);
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,9 +82,13 @@ namespace Bup.WebApp
 
             app.UseProblemDetails();
             
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+            
             // global cors policy
             app.UseCors(x => x
                 .AllowAnyOrigin()
+                .WithOrigins("https://localhost:5001")
                 .AllowAnyMethod()
                 .AllowAnyHeader());
             
@@ -88,14 +97,24 @@ namespace Bup.WebApp
                 app.UseDeveloperExceptionPage();
             }
             
-            app.UseRouting();
-            
             // custom jwt auth middleware
             app.UseMiddleware<JwtMiddleware>();
             
-            app.UseEndpoints(endpoints =>
+            app.MapWhen(x => x.Request.Path.Value.StartsWith("/api"), builder =>
             {
-                endpoints.MapControllers();
+                app.UseMvc();
+            });
+            
+            app.MapWhen(x => !x.Request.Path.Value.ToLower().StartsWith("/api"), builder =>
+            {
+                app.Run(async (context) =>
+                {
+                    var s=  context.Request.Path.Value.ToLower().StartsWith("/api");
+                    context.Response.ContentType = "text/html";
+                    context.Response.Headers[HeaderNames.CacheControl] = "no-store, no-cache, must-revalidate";
+                    var filePath = Path.Combine(env.WebRootPath, "index.html");
+                    await context.Response.SendFileAsync(filePath);
+                });
             });
             
             InitializeDatabase(app);
