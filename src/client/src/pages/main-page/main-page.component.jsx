@@ -50,7 +50,7 @@ const MainPage = () => {
             <div className='menu-container'>
                 <Button
                     onClick={()=>logout()}
-                    style={{'backgroundColor': '#ffffff'}} label="Выйти" className="p-button-raised p-button-text"/>
+                    label="Выйти" className="p-button p-component"/>
             </div>
         </div>
 

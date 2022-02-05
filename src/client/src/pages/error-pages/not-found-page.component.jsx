@@ -8,7 +8,9 @@ import {useNavigate} from "react-router-dom";
 const NotFoundPage = () => {
     const navigate = useNavigate();
 
-    return (<div className="not-found-page" style={{backgroundImage: `url(${bgrImage})`}}>
+    return (<div className="not-found-page"
+                 // style={{backgroundImage: `url(${bgrImage})`}}
+    >
         <div className='title'> 404
             страница не найдена
         </div>

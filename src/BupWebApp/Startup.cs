@@ -86,11 +86,16 @@ namespace Bup.WebApp
             app.UseStaticFiles();
             
             // global cors policy
-            app.UseCors(x => x
-                .AllowAnyOrigin()
-                .WithOrigins("https://localhost:5001")
-                .AllowAnyMethod()
-                .AllowAnyHeader());
+            app.UseCors(x =>
+            {
+                if (env.IsDevelopment())
+                {
+                    x.WithOrigins("http://localhost:3000");
+                    x.WithOrigins("https://localhost:5001");
+                }
+                x.AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
             
             if (env.IsDevelopment())
             {

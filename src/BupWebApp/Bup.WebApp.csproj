@@ -10,16 +10,16 @@
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="11.0.0" />
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-        <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.3.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="3.1.14" />
+        <PackageReference Include="Hellang.Middleware.ProblemDetails" Version="6.4.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="6.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="3.1.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.6">
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.1">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="5.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="6.0.1" />
         <PackageReference Include="React.Core" Version="5.2.11" />
         <PackageReference Include="React.Router" Version="5.2.11" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
@@ -42,12 +42,16 @@
       <_ContentIncludedByDefault Remove="wwwroot\dist\main.f2d5b826.js" />
       <_ContentIncludedByDefault Remove="wwwroot\dist\runtime.550d0510.js" />
       <_ContentIncludedByDefault Remove="wwwroot\dist\vendor.8faee7f5.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\css\main.c19c44ec.css" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\css\main.c19c44ec.css.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\js\main.b3fbab69.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\js\main.b3fbab69.js.LICENSE.txt" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\js\main.b3fbab69.js.map" />
+      <_ContentIncludedByDefault Remove="wwwroot\static\media\sign-in-background.4ccaa77372bd5a3fcb75.jpg" />
     </ItemGroup>
 
     <ItemGroup>
-      <Content Update="wwwroot\index.html">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
+      <Folder Include="wwwroot" />
     </ItemGroup>
 
 </Project>

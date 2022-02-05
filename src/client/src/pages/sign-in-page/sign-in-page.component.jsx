@@ -65,7 +65,9 @@ export const SignInPage = () => {
 
     return (
 
-        <div className="sign-in-page" style={{backgroundImage: `url(${bgrImage})`}}>
+        <div className="sign-in-page"
+             // style={{backgroundImage: `url(${bgrImage})`}}
+        >
             <Toast ref={toast} />
             <h1 className="title">BUP</h1>
             <div className="sign-in-form">
