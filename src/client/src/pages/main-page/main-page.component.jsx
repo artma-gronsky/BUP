@@ -2,18 +2,20 @@ import {Sidebar} from "primereact/sidebar";
 import {useMemo, useState} from "react";
 
 import './main-page.styles.scss';
-import {Button} from "primereact/button";
 import {useStateValue} from "../../contexts/state-context";
 import {setCurrentUser} from "../../redux/user/user.action";
 import {authenticationService} from "../../services/authentication/authentication.service";
 import {ListBox} from "primereact/listbox";
-import {Navigate, Route, Routes, useLocation, useNavigate, useRoutes} from "react-router-dom";
+import {Navigate, Route, Routes, useLocation, useNavigate} from "react-router-dom";
+import CreateAppointment from "../../components/create-appointent/create-appointment.component";
+import {Button} from "primereact/button";
 
 const MainPage = () => {
     const [state, dispatch] = useStateValue();
     const [menu, setMenu] = useState({
         items:[
             { name: 'Все события', route:'/main' },
+            { name: "Создать событие", route: "/main/create-appointment"},
             { name: 'Тесты', route:'/main/test' },
         ]
     });
@@ -57,6 +59,7 @@ const MainPage = () => {
         <div className='main-page-content'>
             <Routes>
                 <Route path={"/"} element={(<div>MAIN</div>)}/>
+                <Route path={'/create-appointment'} element={<CreateAppointment/>}/>
                 <Route path={"/test"} element={(<div>TEST</div>)}/>
                 <Route path={"*"} element={<Navigate to={'/not-found'}/>}></Route>
             </Routes>

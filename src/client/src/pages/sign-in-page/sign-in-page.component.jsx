@@ -10,6 +10,7 @@ import {authenticationService} from "../../services/authentication/authenticatio
 import {useStateValue} from "../../contexts/state-context";
 import {setCurrentUser, setUserError} from "../../redux/user/user.action";
 import { Toast } from 'primereact/toast';
+import {SetGlobalLoading} from "../../redux/global/global.actions";
 
 export const SignInPage = () => {
     const [state, dispatch] = useStateValue();
@@ -38,6 +39,7 @@ export const SignInPage = () => {
             return errors;
         },
         onSubmit: (data) => {
+            dispatch(new SetGlobalLoading(true));
             const {email, password} = data;
 
             authenticationService.login(email, password)
@@ -46,7 +48,7 @@ export const SignInPage = () => {
                     dispatch(setCurrentUser(user));
                     console.log(authenticationService.currentUserValue);
                 }).catch(err => {
-
+                dispatch(new SetGlobalLoading(false));
                 dispatch(setUserError(err))
 
                 toast.current.show({severity: 'info', summary: 'Авторизация', detail: 'Введен неверный логин или пароль', life: 3000});

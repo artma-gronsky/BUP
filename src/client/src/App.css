@@ -5,3 +5,12 @@
 * {
     box-sizing: border-box;
 }
+
+.App{
+    background-color: #2a323d;
+}
+
+h5{
+    color:white;
+    font-size: 20px;
+}
